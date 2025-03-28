@@ -1,0 +1,14 @@
+{
+  "id": "Keystone",
+  "name": "Keystone",
+  "version": "0.0.0",
+  "allowPackageTelemetry": true,
+  "extensions": [
+    {
+      "name": "Keystone Bundle",
+      "alias": "Keystone.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/Keystone/keystone.js"
+    }
+  ]
+}
