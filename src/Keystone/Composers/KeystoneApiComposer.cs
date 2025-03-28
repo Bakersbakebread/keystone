@@ -34,12 +34,11 @@ namespace Keystone.Composers
                 {
                     Title = "Keystone Backoffice API",
                     Version = "1.0",
-                    // Contact = new OpenApiContact
-                    // {
-                    //     Name = "Some Developer",
-                    //     Email = "you@company.com",
-                    //     Url = new Uri("https://company.com")
-                    // }
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Sean Thorne",
+                        Email = "hello@seanthorne.co.uk",
+                    }
                 });
 
                 // Enable Umbraco authentication for the "Example" Swagger document
