@@ -1,6 +1,6 @@
 import { LitElement as g, html as f, css as w, state as c, customElement as x } from "@umbraco-cms/backoffice/external/lit";
 import { UmbElementMixin as C } from "@umbraco-cms/backoffice/element-api";
-import { K as d } from "./services.gen-DNdRpP0A.js";
+import { K as d } from "./services.gen-DB0dPB4f.js";
 import { UMB_NOTIFICATION_CONTEXT as U } from "@umbraco-cms/backoffice/notification";
 import { UMB_CURRENT_USER_CONTEXT as W } from "@umbraco-cms/backoffice/current-user";
 var T = Object.defineProperty, E = Object.getOwnPropertyDescriptor, y = (t) => {
@@ -142,4 +142,4 @@ export {
   o as ExampleDashboardElement,
   S as default
 };
-//# sourceMappingURL=dashboard.element-C0CTX3Lk.js.map
+//# sourceMappingURL=dashboard.element-5upalQm1.js.map

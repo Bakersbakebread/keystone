@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Keystone.Interfaces;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
@@ -17,8 +18,30 @@ namespace Keystone.Composers
         public void Compose(IUmbracoBuilder builder)
         {
 
-            builder.Services.AddSingleton<IOperationIdHandler, CustomOperationHandler>();
+            var commandProviderType = typeof(ICommandProvider);
+            var commandProviderTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(assembly => {
+                    // Handle potential reflection issues with dynamic or non-accessible assemblies.
+                    try
+                    {
+                        return assembly.GetTypes();
+                    }
+                    catch
+                    {
+                        return Array.Empty<Type>();
+                    }
+                })
+                .Where(type => commandProviderType.IsAssignableFrom(type) && type is { IsClass: true, IsAbstract: false })
+                .ToList();
 
+            foreach (var type in commandProviderTypes)
+            {
+                builder.Services.AddSingleton(typeof(ICommandProvider), type);
+            }
+
+            builder.Services.AddSingleton<ICommandRegistry, CommandRegistry>();
+
+            builder.Services.AddSingleton<IOperationIdHandler, CustomOperationHandler>();
             builder.Services.Configure<SwaggerGenOptions>(opt =>
             {
                 // Related documentation:

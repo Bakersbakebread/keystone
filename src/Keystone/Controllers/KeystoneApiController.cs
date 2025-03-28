@@ -1,4 +1,6 @@
 using Asp.Versioning;
+using Keystone.Interfaces;
+using Keystone.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Models.Membership;
@@ -8,11 +10,30 @@ namespace Keystone.Controllers;
 
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = "Keystone")]
-public class KeystoneApiController : KeystoneApiControllerBase
+public class KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor, ICommandRegistry commandRegistry)
+    : KeystoneApiControllerBase
 {
-    private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
+    // Endpoint to retrieve all commands.
+    [HttpGet("commands")]
+    [ProducesResponseType(typeof(IEnumerable<CommandItemsDto>), StatusCodes.Status200OK)]
+    public IActionResult GetCommands()
+    {
+        IEnumerable<CommandItemsDto> commands = commandRegistry.GetAllCommands();
+        return Ok(commands);
+    }
 
-    public KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor) => _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
+    // Endpoint to execute a specific command.
+    [HttpPost("execute")]
+    public IActionResult ExecuteCommand([FromBody] CommandExecutionRequest request)
+    {
+        var executed = commandRegistry.ExecuteCommand(request.ActionKey, request.Parameters);
+        if (executed)
+        {
+            return Ok(new { success = true });
+        }
+
+        return NotFound(new { success = false, message = "Command not found or failed to execute" });
+    }
 
     [HttpGet("ping")]
     [ProducesResponseType<string>(StatusCodes.Status200OK)]
@@ -35,7 +56,7 @@ public class KeystoneApiController : KeystoneApiControllerBase
         // So we can see a long request in the dashboard with a spinning progress wheel
         Thread.Sleep(2000);
 
-        var currentUser = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+        var currentUser = backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
         return currentUser?.Name ?? "I have no idea who you are";
     }
 
@@ -43,6 +64,6 @@ public class KeystoneApiController : KeystoneApiControllerBase
     [ProducesResponseType<IUser>(StatusCodes.Status200OK)]
     public IUser? WhoAmI()
     {
-        return _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+        return backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
     }
 }

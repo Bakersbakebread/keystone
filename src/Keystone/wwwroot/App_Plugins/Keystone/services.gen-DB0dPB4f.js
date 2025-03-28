@@ -1,7 +1,7 @@
-var A = Object.defineProperty;
-var C = (s, e, a) => e in s ? A(s, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : s[e] = a;
-var g = (s, e, a) => C(s, typeof e != "symbol" ? e + "" : e, a);
-var q = /\{[^{}]+\}/g, b = ({ allowReserved: s, name: e, value: a }) => {
+var R = Object.defineProperty;
+var A = (s, e, a) => e in s ? R(s, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : s[e] = a;
+var g = (s, e, a) => A(s, typeof e != "symbol" ? e + "" : e, a);
+var q = /\{[^{}]+\}/g, p = ({ allowReserved: s, name: e, value: a }) => {
   if (a == null) return "";
   if (typeof a == "object") throw new Error("Deeply-nested arrays/objects aren’t supported. Provide your own `querySerializer()` to handle these.");
   return `${e}=${s ? a : encodeURIComponent(a)}`;
@@ -40,7 +40,7 @@ var q = /\{[^{}]+\}/g, b = ({ allowReserved: s, name: e, value: a }) => {
   }
 }, x = ({ allowReserved: s, explode: e, name: a, style: i, value: l }) => {
   if (!e) {
-    let r = (s ? l : l.map((o) => encodeURIComponent(o))).join(_(i));
+    let r = (s ? l : l.map((u) => encodeURIComponent(u))).join(_(i));
     switch (i) {
       case "label":
         return `.${r}`;
@@ -52,50 +52,50 @@ var q = /\{[^{}]+\}/g, b = ({ allowReserved: s, name: e, value: a }) => {
         return `${a}=${r}`;
     }
   }
-  let n = U(i), t = l.map((r) => i === "label" || i === "simple" ? s ? r : encodeURIComponent(r) : b({ allowReserved: s, name: a, value: r })).join(n);
+  let n = U(i), t = l.map((r) => i === "label" || i === "simple" ? s ? r : encodeURIComponent(r) : p({ allowReserved: s, name: a, value: r })).join(n);
   return i === "label" || i === "matrix" ? n + t : t;
 }, $ = ({ allowReserved: s, explode: e, name: a, style: i, value: l }) => {
   if (l instanceof Date) return `${a}=${l.toISOString()}`;
   if (i !== "deepObject" && !e) {
     let r = [];
-    Object.entries(l).forEach(([d, c]) => {
-      r = [...r, d, s ? c : encodeURIComponent(c)];
+    Object.entries(l).forEach(([m, c]) => {
+      r = [...r, m, s ? c : encodeURIComponent(c)];
     });
-    let o = r.join(",");
+    let u = r.join(",");
     switch (i) {
       case "form":
-        return `${a}=${o}`;
+        return `${a}=${u}`;
       case "label":
-        return `.${o}`;
+        return `.${u}`;
       case "matrix":
-        return `;${a}=${o}`;
+        return `;${a}=${u}`;
       default:
-        return o;
+        return u;
     }
   }
-  let n = W(i), t = Object.entries(l).map(([r, o]) => b({ allowReserved: s, name: i === "deepObject" ? `${a}[${r}]` : r, value: o })).join(n);
+  let n = W(i), t = Object.entries(l).map(([r, u]) => p({ allowReserved: s, name: i === "deepObject" ? `${a}[${r}]` : r, value: u })).join(n);
   return i === "label" || i === "matrix" ? n + t : t;
 }, E = ({ path: s, url: e }) => {
   let a = e, i = e.match(q);
   if (i) for (let l of i) {
     let n = !1, t = l.substring(1, l.length - 1), r = "simple";
     t.endsWith("*") && (n = !0, t = t.substring(0, t.length - 1)), t.startsWith(".") ? (t = t.substring(1), r = "label") : t.startsWith(";") && (t = t.substring(1), r = "matrix");
-    let o = s[t];
-    if (o == null) continue;
-    if (Array.isArray(o)) {
-      a = a.replace(l, x({ explode: n, name: t, style: r, value: o }));
+    let u = s[t];
+    if (u == null) continue;
+    if (Array.isArray(u)) {
+      a = a.replace(l, x({ explode: n, name: t, style: r, value: u }));
       continue;
     }
-    if (typeof o == "object") {
-      a = a.replace(l, $({ explode: n, name: t, style: r, value: o }));
+    if (typeof u == "object") {
+      a = a.replace(l, $({ explode: n, name: t, style: r, value: u }));
       continue;
     }
     if (r === "matrix") {
-      a = a.replace(l, `;${b({ name: t, value: o })}`);
+      a = a.replace(l, `;${p({ name: t, value: u })}`);
       continue;
     }
-    let d = encodeURIComponent(r === "label" ? `.${o}` : o);
-    a = a.replace(l, d);
+    let m = encodeURIComponent(r === "label" ? `.${u}` : u);
+    a = a.replace(l, m);
   }
   return a;
 }, O = ({ allowReserved: s, array: e, object: a } = {}) => (i) => {
@@ -111,7 +111,7 @@ var q = /\{[^{}]+\}/g, b = ({ allowReserved: s, name: e, value: a }) => {
         l = [...l, $({ allowReserved: s, explode: !0, name: n, style: "deepObject", value: t, ...a })];
         continue;
       }
-      l = [...l, b({ allowReserved: s, name: n, value: t })];
+      l = [...l, p({ allowReserved: s, name: n, value: t })];
     }
   }
   return l.join("&");
@@ -159,55 +159,67 @@ var q = /\{[^{}]+\}/g, b = ({ allowReserved: s, name: e, value: a }) => {
   use(s) {
     this._fns = [...this._fns, s];
   }
-}, D = () => ({ error: new v(), request: new v(), response: new v() }), N = { bodySerializer: (s) => JSON.stringify(s) }, P = O({ allowReserved: !1, array: { explode: !0, style: "form" }, object: { explode: !0, style: "deepObject" } }), k = { "Content-Type": "application/json" }, T = (s = {}) => ({ ...N, baseUrl: "", fetch: globalThis.fetch, headers: k, parseAs: "auto", querySerializer: P, ...s }), H = (s = {}) => {
+}, D = () => ({ error: new v(), request: new v(), response: new v() }), N = { bodySerializer: (s) => JSON.stringify(s) }, k = O({ allowReserved: !1, array: { explode: !0, style: "form" }, object: { explode: !0, style: "deepObject" } }), P = { "Content-Type": "application/json" }, T = (s = {}) => ({ ...N, baseUrl: "", fetch: globalThis.fetch, headers: P, parseAs: "auto", querySerializer: k, ...s }), H = (s = {}) => {
   let e = j(T(), s), a = () => ({ ...e }), i = (t) => (e = j(e, t), a()), l = D(), n = async (t) => {
     let r = { ...e, ...t, headers: S(e.headers, t.headers) };
     r.body && r.bodySerializer && (r.body = r.bodySerializer(r.body)), r.body || r.headers.delete("Content-Type");
-    let o = I({ baseUrl: r.baseUrl ?? "", path: r.path, query: r.query, querySerializer: typeof r.querySerializer == "function" ? r.querySerializer : O(r.querySerializer), url: r.url }), d = { redirect: "follow", ...r }, c = new Request(o, d);
+    let u = I({ baseUrl: r.baseUrl ?? "", path: r.path, query: r.query, querySerializer: typeof r.querySerializer == "function" ? r.querySerializer : O(r.querySerializer), url: r.url }), m = { redirect: "follow", ...r }, c = new Request(u, m);
     for (let f of l.request._fns) c = await f(c, r);
-    let R = r.fetch, u = await R(c);
-    for (let f of l.response._fns) u = await f(u, c, r);
-    let m = { request: c, response: u };
-    if (u.ok) {
-      if (u.status === 204 || u.headers.get("Content-Length") === "0") return { data: {}, ...m };
-      if (r.parseAs === "stream") return { data: u.body, ...m };
-      let f = (r.parseAs === "auto" ? z(u.headers.get("Content-Type")) : r.parseAs) ?? "json", w = await u[f]();
-      return f === "json" && r.responseTransformer && (w = await r.responseTransformer(w)), { data: w, ...m };
+    let C = r.fetch, o = await C(c);
+    for (let f of l.response._fns) o = await f(o, c, r);
+    let y = { request: c, response: o };
+    if (o.ok) {
+      if (o.status === 204 || o.headers.get("Content-Length") === "0") return { data: {}, ...y };
+      if (r.parseAs === "stream") return { data: o.body, ...y };
+      let f = (r.parseAs === "auto" ? z(o.headers.get("Content-Type")) : r.parseAs) ?? "json", w = await o[f]();
+      return f === "json" && r.responseTransformer && (w = await r.responseTransformer(w)), { data: w, ...y };
     }
-    let p = await u.text();
+    let b = await o.text();
     try {
-      p = JSON.parse(p);
+      b = JSON.parse(b);
     } catch {
     }
-    let h = p;
-    for (let f of l.error._fns) h = await f(p, u, c, r);
+    let h = b;
+    for (let f of l.error._fns) h = await f(b, o, c, r);
     if (h = h || {}, r.throwOnError) throw h;
-    return { error: h, ...m };
+    return { error: h, ...y };
   };
   return { connect: (t) => n({ ...t, method: "CONNECT" }), delete: (t) => n({ ...t, method: "DELETE" }), get: (t) => n({ ...t, method: "GET" }), getConfig: a, head: (t) => n({ ...t, method: "HEAD" }), interceptors: l, options: (t) => n({ ...t, method: "OPTIONS" }), patch: (t) => n({ ...t, method: "PATCH" }), post: (t) => n({ ...t, method: "POST" }), put: (t) => n({ ...t, method: "PUT" }), request: n, setConfig: i, trace: (t) => n({ ...t, method: "TRACE" }) };
 };
-const y = H(T());
+const d = H(T());
 class M {
+  static getCommands(e) {
+    return ((e == null ? void 0 : e.client) ?? d).get({
+      ...e,
+      url: "/umbraco/keystone/api/v1/commands"
+    });
+  }
+  static executeCommand(e) {
+    return ((e == null ? void 0 : e.client) ?? d).post({
+      ...e,
+      url: "/umbraco/keystone/api/v1/execute"
+    });
+  }
   static ping(e) {
-    return ((e == null ? void 0 : e.client) ?? y).get({
+    return ((e == null ? void 0 : e.client) ?? d).get({
       ...e,
       url: "/umbraco/keystone/api/v1/ping"
     });
   }
   static whatsMyName(e) {
-    return ((e == null ? void 0 : e.client) ?? y).get({
+    return ((e == null ? void 0 : e.client) ?? d).get({
       ...e,
       url: "/umbraco/keystone/api/v1/whatsMyName"
     });
   }
   static whatsTheTimeMrWolf(e) {
-    return ((e == null ? void 0 : e.client) ?? y).get({
+    return ((e == null ? void 0 : e.client) ?? d).get({
       ...e,
       url: "/umbraco/keystone/api/v1/whatsTheTimeMrWolf"
     });
   }
   static whoAmI(e) {
-    return ((e == null ? void 0 : e.client) ?? y).get({
+    return ((e == null ? void 0 : e.client) ?? d).get({
       ...e,
       url: "/umbraco/keystone/api/v1/whoAmI"
     });
@@ -215,6 +227,6 @@ class M {
 }
 export {
   M as K,
-  y as c
+  d as c
 };
-//# sourceMappingURL=services.gen-DNdRpP0A.js.map
+//# sourceMappingURL=services.gen-DB0dPB4f.js.map
