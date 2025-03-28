@@ -4,46 +4,45 @@ using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Core.Security;
 
-namespace Keystone.Controllers
+namespace Keystone.Controllers;
+
+[ApiVersion("1.0")]
+[ApiExplorerSettings(GroupName = "Keystone")]
+public class KeystoneApiController : KeystoneApiControllerBase
 {
-    [ApiVersion("1.0")]
-    [ApiExplorerSettings(GroupName = "Keystone")]
-    public class KeystoneApiController : KeystoneApiControllerBase
+    private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
+
+    public KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor) => _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
+
+    [HttpGet("ping")]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    public string Ping()
     {
-        private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
+        return "Pong";
+    }
 
-        public KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor) => _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
+    [HttpGet("whatsTheTimeMrWolf")]
+    [ProducesResponseType(typeof(DateTime), 200)]
+    public DateTime WhatsTheTimeMrWolf()
+    {
+        return DateTime.Now;
+    }
 
-        [HttpGet("ping")]
-        [ProducesResponseType<string>(StatusCodes.Status200OK)]
-        public string Ping()
-        {
-            return "Pong";
-        }
+    [HttpGet("whatsMyName")]
+    [ProducesResponseType<string>(StatusCodes.Status200OK)]
+    public string WhatsMyName()
+    {
+        // So we can see a long request in the dashboard with a spinning progress wheel
+        Thread.Sleep(2000);
 
-        [HttpGet("whatsTheTimeMrWolf")]
-        [ProducesResponseType(typeof(DateTime), 200)]
-        public DateTime WhatsTheTimeMrWolf()
-        {
-            return DateTime.Now;
-        }
+        var currentUser = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+        return currentUser?.Name ?? "I have no idea who you are";
+    }
 
-        [HttpGet("whatsMyName")]
-        [ProducesResponseType<string>(StatusCodes.Status200OK)]
-        public string WhatsMyName()
-        {
-            // So we can see a long request in the dashboard with a spinning progress wheel
-            Thread.Sleep(2000);
-
-            var currentUser = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
-            return currentUser?.Name ?? "I have no idea who you are";
-        }
-
-        [HttpGet("whoAmI")]
-        [ProducesResponseType<IUser>(StatusCodes.Status200OK)]
-        public IUser? WhoAmI()
-        {
-            return _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
-        }
+    [HttpGet("whoAmI")]
+    [ProducesResponseType<IUser>(StatusCodes.Status200OK)]
+    public IUser? WhoAmI()
+    {
+        return _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
     }
 }
