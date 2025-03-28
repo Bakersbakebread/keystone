@@ -12,18 +12,21 @@ namespace Keystone.Controllers
     {
         private readonly IBackOfficeSecurityAccessor _backOfficeSecurityAccessor;
 
-        public KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor)
-        {
-            _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
-        }
+        public KeystoneApiController(IBackOfficeSecurityAccessor backOfficeSecurityAccessor) => _backOfficeSecurityAccessor = backOfficeSecurityAccessor;
 
         [HttpGet("ping")]
         [ProducesResponseType<string>(StatusCodes.Status200OK)]
-        public string Ping() => "Pong";
+        public string Ping()
+        {
+            return "Pong";
+        }
 
         [HttpGet("whatsTheTimeMrWolf")]
         [ProducesResponseType(typeof(DateTime), 200)]
-        public DateTime WhatsTheTimeMrWolf() => DateTime.Now;
+        public DateTime WhatsTheTimeMrWolf()
+        {
+            return DateTime.Now;
+        }
 
         [HttpGet("whatsMyName")]
         [ProducesResponseType<string>(StatusCodes.Status200OK)]
@@ -38,6 +41,9 @@ namespace Keystone.Controllers
 
         [HttpGet("whoAmI")]
         [ProducesResponseType<IUser>(StatusCodes.Status200OK)]
-        public IUser? WhoAmI() => _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+        public IUser? WhoAmI()
+        {
+            return _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+        }
     }
 }
